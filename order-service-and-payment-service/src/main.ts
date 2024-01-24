@@ -1,53 +1,53 @@
-import { ValidationPipe } from "@nestjs/common";
-import { HttpAdapterHost, NestFactory } from "@nestjs/core";
-import { OpenAPIObject, SwaggerModule } from "@nestjs/swagger";
-import { HttpExceptionFilter } from "./filters/HttpExceptions.filter";
-import { AppModule } from "./app.module";
-import { connectMicroservices } from "./connectMicroservices";
+import { ValidationPipe } from '@nestjs/common'
+import { HttpAdapterHost, NestFactory } from '@nestjs/core'
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
+import { HttpExceptionFilter } from './filters/HttpExceptions.filter'
+import { AppModule } from './app.module'
+import { connectMicroservices } from './connectMicroservices'
 import {
-  swaggerPath,
-  swaggerDocumentOptions,
-  swaggerSetupOptions,
-} from "./swagger";
+	swaggerPath,
+	swaggerDocumentOptions,
+	swaggerSetupOptions,
+} from './swagger'
 
-const { PORT = 3000 } = process.env;
+const { PORT = 7290 } = process.env
 
 async function main() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+	const app = await NestFactory.create(AppModule, { cors: true })
 
-  app.setGlobalPrefix("api");
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      forbidUnknownValues: false,
-    })
-  );
+	app.setGlobalPrefix('api')
+	app.useGlobalPipes(
+		new ValidationPipe({
+			transform: true,
+			forbidUnknownValues: false,
+		})
+	)
 
-  const document = SwaggerModule.createDocument(app, swaggerDocumentOptions);
+	const document = SwaggerModule.createDocument(app, swaggerDocumentOptions)
 
-  /** check if there is Public decorator for each path (action) and its method (findMany / findOne) on each controller */
-  Object.values((document as OpenAPIObject).paths).forEach((path: any) => {
-    Object.values(path).forEach((method: any) => {
-      if (
-        Array.isArray(method.security) &&
-        method.security.includes("isPublic")
-      ) {
-        method.security = [];
-      }
-    });
-  });
+	/** check if there is Public decorator for each path (action) and its method (findMany / findOne) on each controller */
+	Object.values((document as OpenAPIObject).paths).forEach((path: any) => {
+		Object.values(path).forEach((method: any) => {
+			if (
+				Array.isArray(method.security) &&
+				method.security.includes('isPublic')
+			) {
+				method.security = []
+			}
+		})
+	})
 
-  await connectMicroservices(app);
-  await app.startAllMicroservices();
+	await connectMicroservices(app)
+	await app.startAllMicroservices()
 
-  SwaggerModule.setup(swaggerPath, app, document, swaggerSetupOptions);
+	SwaggerModule.setup(swaggerPath, app, document, swaggerSetupOptions)
 
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new HttpExceptionFilter(httpAdapter));
+	const { httpAdapter } = app.get(HttpAdapterHost)
+	app.useGlobalFilters(new HttpExceptionFilter(httpAdapter))
 
-  void app.listen(PORT);
+	void app.listen(PORT)
 
-  return app;
+	return app
 }
 
-module.exports = main();
+module.exports = main()

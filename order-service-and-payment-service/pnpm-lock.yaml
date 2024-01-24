@@ -80,6 +80,9 @@ dependencies:
   reflect-metadata:
     specifier: 0.1.13
     version: 0.1.13
+  rxjs:
+    specifier: ^7.8.1
+    version: 7.8.1
   ts-node:
     specifier: 10.9.1
     version: 10.9.1(@types/node@20.11.6)(typescript@5.3.3)

@@ -28,7 +28,7 @@ Configuration for the server component can be provided through the use of enviro
 | JWT_EXPIRATION       | the expiration time for the json-web token   | 2d                                                                  |
 
 > **Note**
-> Amplication generates default values and stores them under the .env file. It is advised to use some form of secrets manager/vault solution when using in production.
+> The generated default values are stored under the .env file. It is advised to use some form of secrets manager/vault like: (Google Cloud Secret Manager, HashiCorp Vault) solution when using in production.
 
 ## Step 2.1: Scripts - pre-requisites
 
